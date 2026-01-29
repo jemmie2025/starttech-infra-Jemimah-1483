@@ -32,7 +32,7 @@ jobs:
 
       - name: Terraform format check
         working-directory: terraform
-        run: terraform fmt -check -recursive || echo "Formatting issues detected"
+        run: terraform fmt -check -recursive
 
       - name: Initialize Terraform (backend disabled)
         working-directory: terraform
