@@ -63,3 +63,9 @@ variable "redis_num_nodes" {
   type        = number
   default     = 1
 }
+
+variable "redis_auth_token" {
+  description = "Redis authentication token"
+  type        = string
+  sensitive   = true
+}

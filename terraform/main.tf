@@ -1,4 +1,4 @@
- terraform{
+terraform {
   required_version = ">= 1.0"
 
   required_providers {
@@ -8,12 +8,12 @@
     }
   }
 
-     backend "s3" {
-    bucket         = "starttech-terraform-state-new"
-    key            = "much-to-do/terraform.tfstate"
-     region         = "us-east-1"
-     encrypt        = true
-   }
+  backend "s3" {
+    bucket  = "starttech-terraform-state-new"
+    key     = "much-to-do/terraform.tfstate"
+    region  = "us-east-1"
+    encrypt = true
+  }
 }
 
 provider "aws" {
@@ -28,6 +28,11 @@ provider "aws" {
   }
 }
 
+# Hardcoded availability zones
+locals {
+  availability_zones = ["us-east-1a", "us-east-1b", "us-east-1c"]
+}
+
 # Networking Module
 module "networking" {
   source = "./modules/networking"
@@ -35,10 +40,6 @@ module "networking" {
   environment        = var.environment
   vpc_cidr           = var.vpc_cidr
   availability_zones = local.availability_zones
-}
-# Hardcoded availability zones
-locals {
-  availability_zones = ["us-east-1a", "us-east-1b", "us-east-1c"]
 }
 
 # Compute Module (ALB, ASG, EC2)
@@ -71,18 +72,9 @@ module "storage" {
 }
 
 # Monitoring Module (CloudWatch, ElastiCache, Alarms)
-
-
-
-variable "redis_auth_token" {
-  description = "Redis authentication token"
-  type        = string
-  sensitive   = true
-}
-
-
 module "monitoring" {
   source = "./modules/monitoring"
+
   environment             = var.environment
   aws_region              = var.aws_region
   log_retention_days      = var.log_retention_days
@@ -91,11 +83,7 @@ module "monitoring" {
   redis_node_type         = var.redis_node_type
   redis_num_nodes         = var.redis_num_nodes
   redis_auth_token        = var.redis_auth_token
-
   target_group_name       = "much-to-do-backend-tg"
 
   depends_on = [module.networking]
-
 }
-  
-
