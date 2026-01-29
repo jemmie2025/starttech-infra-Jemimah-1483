@@ -33,9 +33,9 @@ jobs:
       - name: Terraform format check
         run: terraform fmt -check -recursive terraform/
 
-      - name: Initialize Terraform
+      - name: Initialize Terraform (backend disabled)
         working-directory: terraform
-        run: terraform init -upgrade
+        run: terraform init -backend=false
 
       - name: Validate Terraform
         working-directory: terraform
