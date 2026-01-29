@@ -1,4 +1,4 @@
-terraform {
+ terraform{
   required_version = ">= 1.0"
 
   required_providers {
@@ -8,13 +8,12 @@ terraform {
     }
   }
 
-  backend "s3" {
-    bucket         = "starttech-terraform-state"
+     backend "s3" {
+    bucket         = "starttech-terraform-state-new"
     key            = "much-to-do/terraform.tfstate"
-    region         = "us-east-1"
-    encrypt        = true
-    
-  }
+     region         = "us-east-1"
+     encrypt        = true
+   }
 }
 
 provider "aws" {
@@ -35,7 +34,11 @@ module "networking" {
 
   environment        = var.environment
   vpc_cidr           = var.vpc_cidr
-  availability_zones = data.aws_availability_zones.available.names
+  availability_zones = local.availability_zones
+}
+# Hardcoded availability zones
+locals {
+  availability_zones = ["us-east-1a", "us-east-1b", "us-east-1c"]
 }
 
 # Compute Module (ALB, ASG, EC2)
@@ -68,6 +71,16 @@ module "storage" {
 }
 
 # Monitoring Module (CloudWatch, ElastiCache, Alarms)
+
+
+
+variable "redis_auth_token" {
+  description = "Redis authentication token"
+  type        = string
+  sensitive   = true
+}
+
+
 module "monitoring" {
   source = "./modules/monitoring"
   environment             = var.environment
@@ -77,13 +90,12 @@ module "monitoring" {
   redis_security_group_id = module.networking.redis_security_group_id
   redis_node_type         = var.redis_node_type
   redis_num_nodes         = var.redis_num_nodes
+  redis_auth_token        = var.redis_auth_token
 
   target_group_name       = "much-to-do-backend-tg"
 
   depends_on = [module.networking]
-}
 
-# Get available AZs
-data "aws_availability_zones" "available" {
-  state = "available"
 }
+  
+

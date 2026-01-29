@@ -19,7 +19,7 @@ variable "vpc_cidr" {
 variable "instance_type" {
   description = "EC2 instance type"
   type        = string
-  default     = "t2.micro"
+  default     = "cache.t3.micro"
 }
 
 variable "asg_min_size" {
@@ -55,7 +55,7 @@ variable "log_retention_days" {
 variable "redis_node_type" {
   description = "Redis node type"
   type        = string
-  default     = "cache.t2.micro"
+  default     = "cache.t3.micro"
 }
 
 variable "redis_num_nodes" {
@@ -63,4 +63,3 @@ variable "redis_num_nodes" {
   type        = number
   default     = 1
 }
-
